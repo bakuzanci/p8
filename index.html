@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RYUUMA VAN ASHVYR</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        :root {
+            --primary: #1e40af;
+            --secondary: #3b82f6;
+            --accent: #0ea5e9;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --success: #10b981;
+            --whatsapp: #25D366;
+            --dana: #00b1ff;
+            --shop: #f59e0b;
+        }
+
+        /* LOADING SCREEN */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loader-video {
+            width: 300px;
+            max-width: 80%;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.5);
+        }
+
+        .loader-text {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        /* BACKGROUND */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://files.catbox.moe/uqq5z2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: brightness(0.4);
+            z-index: -2;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 64, 175, 0.7) 100%);
+            z-index: -1;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* PROFILE CARD */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            margin: 20px 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .profile-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--secondary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 25px;
+            transition: transform 0.5s;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .name-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .name {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #60a5fa, #93c5fd, #dbeafe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 5px 15px rgba(96, 165, 250, 0.3);
+        }
+
+        .verified-badge {
+            color: var(--secondary);
+            font-size: 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            padding: 5px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .tagline {
+            color: #cbd5e1;
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* CONTACT BUTTONS */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px 0;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s;
+        }
+
+        .contact-card:hover::before {
+            left: 100%;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .contact-card.whatsapp:hover {
+            background: rgba(37, 211, 102, 0.2);
+            border-color: var(--whatsapp);
+        }
+
+        .contact-card.shop:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--shop);
+        }
+
+        .contact-card.info:hover {
+            background: rgba(14, 165, 233, 0.2);
+            border-color: var(--accent);
+        }
+
+        .icon-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .whatsapp .icon-container {
+            background: rgba(37, 211, 102, 0.2);
+            color: var(--whatsapp);
+        }
+
+        .shop .icon-container {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--shop);
+        }
+
+        .info .icon-container {
+            background: rgba(14, 165, 233, 0.2);
+            color: var(--accent);
+        }
+
+        .contact-text h3 {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .contact-text p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            text-align: left;
+        }
+
+        /* PAYMENT SECTION */
+        .payment-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            margin: 30px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .payment-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dana-card {
+            background: rgba(0, 177, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            min-width: 300px;
+            flex: 1;
+            border: 1px solid rgba(0, 177, 255, 0.3);
+        }
+
+        .dana-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .dana-icon {
+            color: var(--dana);
+            font-size: 2.5rem;
+        }
+
+        .dana-info h3 {
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .dana-info p {
+            color: #cbd5e1;
+        }
+
+        .copy-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .copy-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--dana), #0095d4);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 177, 255, 0.4);
+        }
+
+        .qris-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .qris-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 15px;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .qris-img:hover {
+            transform: scale(1.05);
+            border-color: var(--secondary);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .qris-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 50px;
+            color: #94a3b8;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .profile-card {
+                padding: 25px;
+            }
+            
+            .name {
+                font-size: 2rem;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-container {
+                flex-direction: column;
+            }
+            
+            .dana-card, .qris-card {
+                min-width: 100%;
+            }
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen">
+        <video class="loader-video" autoplay muted playsinline>
+            <source src="https://files.catbox.moe/3jdagd.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="loader-text">Loading RYUMMA VAN ASHVYR...</div>
+    </div>
+
+    <!-- BACKGROUND -->
+    <div class="background"></div>
+    <div class="overlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <!-- PROFILE SECTION -->
+        <div class="profile-card animate__animated animate__fadeIn">
+            <img src="https://files.catbox.moe/0tco7x.jpg" alt="Profile" class="profile-img">
+            
+            <div class="name-container">
+                <h1 class="name">RYUUMA VAN ASHVYR</h1>
+                <i class="fas fa-check-circle verified-badge" title="Verified Account"></i>
+            </div>
+            
+            <p class="tagline">
+                Trusted & Verified Partner • Premium Services • Fast Response
+            </p>
+        </div>
+
+        <!-- CONTACT SECTION -->
+        <div class="contact-grid">
+            <a href="https://wa.me//6287831482814" target="_blank" class="contact-card whatsapp">
+                <div class="icon-container">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div class="contact-text">
+                    <h3>WhatsApp</h3>
+                    <p>Chat langsung untuk konsultasi dan pemesanan</p>
+                </div>
+            </a>
+
+            <a href="https://lynk.id/npcirengjembuten" target="_blank" class="contact-card shop">
+                <div class="icon-container">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="contact-text">
+                    <h3>Shop & Services</h3>
+                    <p>Lihat produk dan layanan yang tersedia</p>
+                </div>
+            </a>
+
+            <a href="https://whatsapp.com/channel/0029Vb72gJAIHphDslerkN2Q" target="_blank" class="contact-card info">
+                <div class="icon-container">
+                    <i class="fas fa-circle-exclamation"></i>
+                </div>
+                <div class="contact-text">
+                    <h3>Info & Update</h3>
+                    <p>Channel informasi terbaru dan promo</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- PAYMENT SECTION -->
+        <div class="payment-section animate__animated animate__fadeInUp">
+            <h2 class="section-title">
+                <i class="fas fa-credit-card"></i> Payment Methods
+            </h2>
+            
+            <div class="payment-container">
+                <!-- DANA -->
+                <div class="dana-card">
+                    <div class="dana-header">
+                        <i class="fas fa-wallet dana-icon"></i>
+                        <div class="dana-info">
+                            <h3>DANA Payment</h3>
+                            <p>Transfer cepat via DANA</p>
+                        </div>
+                    </div>
+                    
+                    <div class="copy-container">
+                        <input type="text" class="copy-input" value="085706645429" id="danaNumber" readonly>
+                        <button class="copy-btn" onclick="copyDanaNumber()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    
+                    <p style="color: #94a3b8; margin-top: 15px; font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i> Salin nomor di atas untuk transfer DANA
+                    </p>
+                </div>
+
+                <!-- QRIS -->
+                <div class="qris-card">
+                    <a href="https://wa.me/p/32786285757682891/6287831482814" target="_blank">
+                        <img src="https://files.catbox.moe/e88mpe.jpg" alt="QRIS Code" class="qris-img">
+                    </a>
+                    <p class="qris-text">
+                        <i class="fas fa-qrcode"></i> Scan QRIS untuk pembayaran instan
+                    </p>
+                    <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 10px;">
+                        Klik QR untuk konfirmasi via WhatsApp
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>© 2024 RYUUMA VAN ASHVYR • All Rights Reserved</p>
+            <p style="margin-top: 10px;">
+                <i class="fas fa-shield-alt"></i> Trusted Partner • 
+                <i class="fas fa-bolt"></i> Fast Response • 
+                <i class="fas fa-star"></i> Premium Quality
+            </p>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i> <span id="notificationText">Copied to clipboard!</span>
+    </div>
+
+    <script>
+        // LOADING SCREEN
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                }, 500);
+            }, 2000);
+        });
+
+        // COPY DANA NUMBER
+        function copyDanaNumber() {
+            const input = document.getElementById('danaNumber');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            
+            showNotification('Nomor DANA berhasil disalin!');
+        }
+
+        // SHOW NOTIFICATION
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notificationText');
+            
+            text.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // HOVER EFFECTS
+        document.querySelectorAll('.contact-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('animate__animated', 'animate__pulse');
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('animate__animated', 'animate__pulse');
+            });
+        });
+
+        // AUTO PLAY VIDEO
+        document.querySelector('video').play();
+    </script>
+</body>
+</html>
